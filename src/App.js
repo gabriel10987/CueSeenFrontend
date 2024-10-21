@@ -1,6 +1,8 @@
-import React, {useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import MovieList from './component/MovieList';
+import './App.css'; // Importa los estilos
+
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -13,33 +15,35 @@ function App() {
   const [editMovieId, setEditMovieId] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/movies')
-    .then(res => setMovies(res.data))
-    .catch(err => console.log(err));
+    axios.get(`${process.env.REACT_APP_API_URL}/movies`)
+      .then(res => setMovies(res.data))
+      .catch(err => console.log(err));
   }, []);
 
   const addMovie = () => {
     const newMovie = { title, director, genre, releaseDate, watched };
 
     if (editMode) {
-      axios.put(`http://localhost:5000/movies/${editMovieId}`, newMovie)
-      .then(res => {
-        setMovies(movies.map((movie) => (movie._id === editMovieId ? res.data : movie)));
-        resetForm();
-      })
-      .catch((err) => console.log(err));
+      axios.put(`${process.env.REACT_APP_API_URL}/movies/${editMovieId}`, newMovie)
+        .then(res => {
+          setMovies(movies.map((movie) => (movie._id === editMovieId ? res.data : movie)));
+          resetForm();
+        })
+        .catch((err) => console.log(err));
     } else {
-      axios.post('http://localhost:5000/movies', newMovie)
-      .then(res => setMovies([...movies, res.data]))
-      .catch(err => console.log(err));
+      axios.post(`${process.env.REACT_APP_API_URL}/movies`, newMovie)
+        .then(res => {
+          setMovies([...movies, res.data]);
+          resetForm();
+        })
+        .catch(err => console.log(err));
     }
-    
   };
 
   const deleteMovie = (id) => {
-    axios.delete(`http://localhost:5000/movies/${id}`)
-    .then(() => setMovies(movies.filter((movie) => movie._id !== id)))
-    .catch((err) => console.log(err));
+    axios.delete(`${process.env.REACT_APP_API_URL}/movies/${id}`)
+      .then(() => setMovies(movies.filter((movie) => movie._id !== id)))
+      .catch((err) => console.log(err));
   };
 
   const editMovie = (movie) => {
@@ -62,27 +66,58 @@ function App() {
     setEditMovieId(null);
   };
 
-
   return (
-    <div>
+    <div className="app-container">
       <h1>Mi Catálogo de Películas</h1>
+      <div className="main-content">
+        <div className="form-section">
+          <input
+            placeholder="Título"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            className="input-field"
+          />
+          <input
+            placeholder="Director"
+            value={director}
+            onChange={e => setDirector(e.target.value)}
+            className="input-field"
+          />
+          <input
+            placeholder="Género"
+            value={genre}
+            onChange={e => setGenre(e.target.value)}
+            className="input-field"
+          />
+          <input
+            placeholder="Fecha de Lanzamiento"
+            value={releaseDate}
+            onChange={e => setReleaseDate(e.target.value)}
+            className="input-field"
+            type="date"
+          />
+          <label className="checkbox-container">
+            Visto:
+            <input
+              type="checkbox"
+              checked={watched}
+              onChange={() => setWatched(!watched)}
+              className="checkbox"
+            />
+          </label>
 
-      <input placeholder='Título' value={title} onChange={e => setTitle(e.target.value)} />
-      <input placeholder='Director' value={director} onChange={e => setDirector(e.target.value)} />
-      <input placeholder='Género' value={genre} onChange={e => setGenre(e.target.value)} />
-      <input placeholder='Fecha de Lanzamiento' value={releaseDate} onChange={e => setReleaseDate(e.target.value)} />
-      <label>
-        Visto:
-        <input type='checkbox' checked={watched} onChange={() => setWatched(!watched)} />
-      </label>
-      <button onClick={addMovie}>
-        {editMode ? 'Guardar Cambios' : 'Agregar Película'}
-      </button>
+          <div className="button-container">
+            <button className="primary-button" onClick={addMovie}>
+              {editMode ? 'Guardar Cambios' : 'Agregar Película'}
+            </button>
+            <button className="secondary-button" onClick={resetForm}>
+              Cancelar
+            </button>
+          </div>
+        </div>
 
-      <button onClick={resetForm} style={{ marginLeft: '10px' }}>
-        Cancelar
-      </button>
-      <MovieList movies={movies} onEdit={editMovie} onDelete={deleteMovie} />
+        <MovieList movies={movies} onEdit={editMovie} onDelete={deleteMovie} />
+      </div>
     </div>
   );
 }

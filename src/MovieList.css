@@ -1,0 +1,51 @@
+.movie-list-container {
+    flex: 2;
+    max-height: 600px; /* Limita la altura máxima del contenedor de la lista */
+    overflow-y: auto; /* Permite hacer scroll si es necesario */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Las tarjetas serán más largas y ocuparán todo el ancho */
+  .movie-card {
+    background-color: #ebebeb;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 90%; /* Ocupa todo el ancho disponible */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  h2 {
+    margin-top: 0;
+    font-size: 24px;
+  }
+  
+  p {
+    margin: 5px 0;
+  }
+  
+  .movie-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .delete-button {
+    color: red;
+  }
+  
+  .action-button:hover {
+    transform: scale(1.1);
+  }
+  
